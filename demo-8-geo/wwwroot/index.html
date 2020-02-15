@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Redis Geo Demo</title>
+    <style>
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id='map'></div>
+    <script>
+        // Class 4 hackery to load the API key for Google Maps from the ASP.NET Core secret store
+        fetch('/api/config')
+            .then(r => {
+                return r.json();
+            })
+            .then(r => {
+                var element = document.createElement('script');
+                element.src = 'https://maps.googleapis.com/maps/api/js?key=' + r.key + '&callback=initMap'
+                document.getElementsByTagName('body')[0].appendChild(element);
+            });
+
+        var map;
+        var currentMarkers = [];
+        var infoWindows = [];
+        window.initMap = function () {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 0, lng: 0 },
+                zoom: 3
+            });
+
+            map.addListener('click', function (e) {
+                var lat = e.latLng.lat();
+                var lng = e.latLng.lng();
+
+                for (i = 0; i < currentMarkers.length; i++) {
+                    currentMarkers[i].setMap(null);
+                }
+                currentMarkers.length = 0;
+
+                for (i = 0; i < infoWindows.length; i++) {
+                    infoWindows[i].close();
+                }
+                infoWindows.length = 0;
+
+                fetch('/api/cities/?lat=' + lat + '&lng=' + lng + '&r=1000')
+                    .then(r => r.json())
+                    .then(r => {
+                        for (i = 0; i < r.length; i++) {
+                            var marker = new google.maps.Marker({
+                                position: {
+                                    lat: r[i].lat,
+                                    lng: r[i].lng
+                                },
+                                map: map,
+                                title: r[i].name
+                            });
+                            var infowindow = new google.maps.InfoWindow({
+                                content: r[i].name
+                            });
+
+                            currentMarkers.push(marker);
+                            infoWindows.push(infowindow);
+                        }
+
+                        for (i = 0; i < r.length; i++) {
+                            (function (i) {
+                                currentMarkers[i].addListener('click', function () {
+                                    for (j = 0; j < infoWindows.length; j++) {
+                                        infoWindows[j].close();
+                                    }
+                                    infoWindows[i].open(map, currentMarkers[i]);
+                                });
+                            })(i);
+                        }
+                    });
+            });
+        };
+    </script>
+</body>
+</html>
