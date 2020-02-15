@@ -1,4 +1,4 @@
-# Demo 6. Pub/Sub
+# Demo 6: Pub/Sub
 
 Make sure Redis is running with protected mode off if you are running on WSL:
 

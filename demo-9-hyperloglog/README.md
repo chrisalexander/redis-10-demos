@@ -1,4 +1,4 @@
-# Demo 9. HyperLogLog
+# Demo 9: HyperLogLog
 
 We use the included project to parse the text file, this is Data Science (TM) after all so the data needs cleaning.
 

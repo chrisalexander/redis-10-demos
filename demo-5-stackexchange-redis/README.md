@@ -1,4 +1,4 @@
-# Demo 5. StackExchange.Redis
+# Demo 5: StackExchange.Redis
 
 This is a very basic C# demo of StackExchange.Redis.
 

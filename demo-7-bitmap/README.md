@@ -1,4 +1,4 @@
-# Demo 7. Bitmap
+# Demo 7: Bitmap
 
 First, we load in the bitmap data. This is a good chance to show off Redis bulk insert.
 

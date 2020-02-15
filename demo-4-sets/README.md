@@ -1,4 +1,4 @@
-# Demo 5: Sets
+# Demo 4: Sets
 
 Add some people to the set:
 
